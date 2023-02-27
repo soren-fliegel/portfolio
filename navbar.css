@@ -1,0 +1,18 @@
+.head-bar {
+    color:rgb(255, 255, 255);
+    background-color: black;
+    font-size:2vw;
+    text-align: justify;
+  }
+  
+  a:link, a:visited {
+    color: white;
+    text-decoration: none;
+  }
+  a:link:active, a:visited:active{
+    color: white;
+  }
+  
+  /* h5:hover {
+    font-size:3vw;
+  } */
