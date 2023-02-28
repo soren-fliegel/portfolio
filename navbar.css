@@ -3,7 +3,10 @@
     background-color: black;
     font-size:2vw;
     text-align: justify;
+    margin-top: 0px;
   }
+
+
   
   a:link, a:visited {
     color: white;
@@ -13,6 +16,6 @@
     color: white;
   }
   
-  /* h5:hover {
-    font-size:3vw;
-  } */
+a:hover {
+    color:pink;
+  }
