@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<!-- file:///Users/sorenfliegel/Downloads/PersonalProjects/GithubPersonalWebsite/portfolio/test.html -->
+
+<html>
+    <head>
+        <title>Unscramble Game</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+            
+            #container {
+                margin: 0 auto;
+                max-width: 800px;
+                padding: 20px;
+            }
+            
+            #letters {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+            
+            #letters span {
+                background-color: #eee;
+                border: 1px solid #ccc;
+                display: inline-block;
+                font-size: 32px;
+                margin: 5px;
+                padding: 10px;
+                text-align: center;
+                user-select: none;
+            }
+            
+            #definition {
+                font-style: italic;
+                margin-bottom: 20px;
+            }
+            
+            #submit {
+                background-color: #009900;
+                border: none;
+                color: #fff;
+                cursor: pointer;
+                font-size: 16px;
+                margin-bottom: 20px;
+                padding: 10px 20px;
+            }
+            
+            #message {
+                color: #009900;
+                font-size: 32px;
+                text-align: center;
+                visibility: hidden;
+            }
+            
+            #message.show {
+                visibility: visible;
+                animation: flash 3s linear;
+            }
+            
+            @keyframes flash {
+                0% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <h1>Unscramble Game</h1>
+            <label for="length">Choose the length of the word:</label>
+            <select id="length">
+                <option value="3">3 letters</option>
+                <option value="4">4 letters</option>
+                <option value="5">5 letters</option>
+                <option value="6">6 letters</option>
+                <option value="7">7 letters</option>
+            </select>
+            <br>
+            <button id="generate">Generate</button>
+            <br>
+            <div id="letters"></div>
+            <div id="definition"></div>
+            <button id="submit">Submit</button>
+            <div id="message">Congratulations!</div>
+        </div>
+    <script>
+
+        let word;
+        let definition;
+        let shuffledWord;
+
+        function shuffleWord(word) {
+            let shuffledWord = '';
+            while (word.length > 0) {
+                let index = Math.floor(Math.random() * word.length);
+                shuffledWord += word.charAt(index);
+                word = word.slice(0, index) + word.slice(index + 1);
+            }
+            return shuffledWord;
+        }
+
+        function generateWord(length) {
+            fetch(`https://api.dictionaryapi.dev/api/v2/entries/en_US?wordlength=${length}`)
+                .then(response => response.json())
+                .then(data => {
+                    word = data[0].word.toLowerCase();
+                    definition = data[0].meanings[0].definitions[0].definition;
+                    shuffledWord = shuffleWord(word);
+
+                    let lettersDiv = document.getElementById('letters');
+                    let submitButton = document.getElementById('submit');
+                    let messageDiv = document.getElementById('message');
+
+                    lettersDiv.innerHTML = '';
+                    shuffledWord.split('').forEach(letter => {
+                        let span = document.createElement('span');
+                        span.textContent = letter;
+                        span.draggable = true;
+                        lettersDiv.appendChild(span);
+                    });
+
+                    submitButton.disabled = false;
+                    messageDiv.classList.remove('show');
+                    document.getElementById('definition').textContent = definition;
+                })
+                .catch(error => console.log(error));
+        }
+
+        document.getElementById('generate').addEventListener('click', () => {
+            let length = document.getElementById('length').value;
+            generateWord(length);
+        });
+
+        document.getElementById('submit').addEventListener('click', () => {
+            let guessedWord = Array.from(document.querySelectorAll('#letters span'))
+                .map(span => span.textContent)
+                .join('');
+
+            if (guessedWord === word) {
+                document.getElementById('message').classList.add('show');
+                document.getElementById('submit').disabled = true;
+            }
+        });
+    </script>
+
+    </body>
+</html>
+		
